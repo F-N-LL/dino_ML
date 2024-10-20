@@ -70,19 +70,14 @@ def game_loop():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     running = False
-                if event.key == pygame.K_ESCAPE:
-                    running = False
-                elif event.key == pygame.K_UP:
-                    dino.jump()
-                elif event.key == pygame.K_SPACE:
+                elif event.key in (pygame.K_UP, pygame.K_SPACE):
                     dino.jump()
                 elif event.key == pygame.K_DOWN:
                     dino.crouch()
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_DOWN:
-                    dino.stand()
+            elif event.type == pygame.KEYUP and event.key == pygame.K_DOWN:
+                dino.stand()
         
-        obstacles_manager.update(SCREEN_WIDTH, speed)  # Update obstacles
+        obstacles_manager.update(SCREEN_WIDTH, speed, score)  # Update obstacles
 
         # Increase speed logic
         frame_counter += 1
@@ -91,11 +86,8 @@ def game_loop():
 
         # Adds obtacles randomly    
         if random.randint(1, 100) == 1:
-            obstacles_manager.add_obstacle(SCREEN_WIDTH, SCREEN_HEIGHT, speed)
-           #print(f"Obstacle added at {SCREEN_WIDTH}")  # Check if obstacles are being added
+            obstacles_manager.add_obstacle(SCREEN_WIDTH, SCREEN_HEIGHT, speed, score)
 
-        #print(f"Obstacles on screen: {len(obstacles_manager.obstacles)}")  # Check number of obstacles each frame
-        
         # Update dino's position
         dino.update() 
         
@@ -103,12 +95,6 @@ def game_loop():
         dino.draw(screen)  # Draw dino
         obstacles_manager.draw(screen)  # Draw obstacles
         
-        # Increment score every 5 frames
-        # frame_counter += 1
-        # if frame_counter == 5:
-        #     score += 1  # Increment score every 5 frames
-        #     frame_counter = 0  # Reset counter
-
         # Increment and display score every 5 frames --- OTHER ALTERNATIVE
         if frame_counter % 5 == 0:
             score += 1
@@ -116,7 +102,6 @@ def game_loop():
         # Display score
         score_text = font.render(f"Score: {score}", True, (0, 0, 0))
         screen.blit(score_text, (10, 10))  # Position the score text at top-left corner
-
 
         if obstacles_manager.collide(dino):
             print("Collision detected! Game Over.")

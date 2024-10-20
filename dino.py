@@ -2,7 +2,6 @@
 import pygame
 from settings import *
 
-
 class Dino:
     def __init__(self, x, y, screen_height):
         self.x = x
