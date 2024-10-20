@@ -34,12 +34,6 @@ class ObstaclesManager:
         self.obstacles = []
         self.speed = INITIAL_SPEED
 
-    # def get_max_cacti_count(self, score):
-    #     if score < 2500:
-    #         return min(2, 1 + score // 1000)  # Start with 1, max 2 before 2500
-    #     else:
-    #         return 4  # Allow up to 4 cacti after 2500 points
-    
     def get_max_cacti_count(self, score):
         if score < 200:
             return 1  # Only 1 cactus up to 200 points
@@ -52,29 +46,26 @@ class ObstaclesManager:
 
     def add_obstacle(self, screen_width, screen_height, speed, score):
         min_gap = 100
-        max_gap = max(400 - (speed - INITIAL_SPEED) * 30, 200)
+        max_gap = int(max(400 - (speed - INITIAL_SPEED) * 30, 200))  # Convert to int
         gap_reduction = min(score // 100, max_gap - min_gap)
-        gap = random.randint(min_gap, max_gap - gap_reduction)
+        gap = random.randint(min_gap, int(max_gap - gap_reduction))  # Convert to int
         
         if not self.obstacles or self.obstacles[-1].x < screen_width - gap:
-            if random.choice([True, False]):  # 50% chance of either Cactus or Bird
-                if random.random() < 0.3:  # 30% chance to spawn a group of cacti
+            if random.choice([True, False]):
+                if random.random() < 0.3:
                     max_cacti = self.get_max_cacti_count(score)
-                    num_cacti = random.randint(1, max_cacti)  # Number of cacti based on score
-                    
-                    # Calculate spacing between cacti based on score
-                    spacing = 30 if score < 1000 else 25  # Tighter spacing at higher scores
+                    num_cacti = random.randint(1, max_cacti)
+                    spacing = 30 if score < 1000 else 25
                     
                     for i in range(num_cacti):
-                        self.obstacles.append(Cactus(screen_width + i * spacing, screen_height, speed))
+                        self.obstacles.append(Cactus(int(screen_width + i * spacing), screen_height, speed))
                 else:
-                    self.obstacles.append(Cactus(screen_width, screen_height, speed))
+                    self.obstacles.append(Cactus(int(screen_width), screen_height, speed))
             else:
-                # Birds become more common at higher scores
-                if score > 1500 or random.random() < 0.4:  # 40% chance initially, more frequent later
-                    self.obstacles.append(Bird(screen_width, screen_height, speed))
+                if score > 1500 or random.random() < 0.4:
+                    self.obstacles.append(Bird(int(screen_width), screen_height, speed))
                 else:
-                    self.obstacles.append(Cactus(screen_width, screen_height, speed))
+                    self.obstacles.append(Cactus(int(screen_width), screen_height, speed))
 
     def update(self, screen_width, speed, score):
         for obstacle in self.obstacles[:]:
